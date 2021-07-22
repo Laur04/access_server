@@ -1,3 +1,6 @@
+from ansible_playbook_runner import Runner
+from contextlib import redirect_stdout
+from io import StringIO
 import os
 import subprocess
 
@@ -14,15 +17,15 @@ def index(request):
     if request.method == 'POST':
         form = RunForm(request.POST)
         if form.is_valid():
-            hostname = FirewallDevice.objects.get(id=form.cleaned_data['firewall_device']).hostname
-            with open(settings.MEDIA_ROOT + '/hosts', 'a') as host_file:
-                host_file.write('[{}]\n{}  ansible_ssh_pass={}'.format(hostname, hostname, settings.ANSIBLE_SSH_PASS))
+            hostname = form.cleaned_data['firewall_device'].hostname
+            with open(str(settings.MEDIA_ROOT) + '/hosts', 'w') as host_file:
+                host_file.write('[{}]\n{}  ansible_ssh_pass={}\n'.format(hostname, hostname, settings.ANSIBLE_SSH_PASS))
             os.environ['ACTION_HOST'] = hostname
-            file_path = Action.objects.get(id=form.cleaned_data['action']).script.path
-            try:
-                output = subprocess.check_output("Runner(['{}'], '{}').run()".format(settings.MEDIA_ROOT + '/hosts', file_path))
-            except subprocess.CalledProcessError as err:
-                output = err
+
+            output = StringIO()
+            with redirect_stdout(output):
+                exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', form.cleaned_data['action'].script.path))
+            output = output.getvalue()
     else:
         form = RunForm()
 
