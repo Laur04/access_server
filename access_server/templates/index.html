@@ -10,10 +10,17 @@
             <button type='submit'>Run</button>
         </form>
     </div>
-    {% if output %}
+    {% if display %}
         <hr>
-        <div id='run-results'>
-            {{ output }}
+        <div id='run-display'>
+            <p>{{ display.tasks }}</p>
+            <p>{{ display.recap }}</p>
+        </div>
+    {% endif %}
+    {% if error %}
+        <hr>
+        <div id='run-error'>
+            {{ error }}
         </div>
     {% endif %}
 {% endblock %}

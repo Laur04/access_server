@@ -1,5 +1,5 @@
 from ansible_playbook_runner import Runner
-from contextlib import redirect_stdout
+from contextlib import redirect_stdout, redirect_stderr
 from io import StringIO
 import os
 import subprocess
@@ -13,7 +13,7 @@ from .models import Action, FirewallDevice
 
 def index(request):
     form = None
-    output = None
+    display, error = None, None
     if request.method == 'POST':
         form = RunForm(request.POST)
         if form.is_valid():
@@ -23,13 +23,22 @@ def index(request):
             os.environ['ACTION_HOST'] = hostname
 
             output = StringIO()
+            error = StringIO()
             with redirect_stdout(output):
                 exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', form.cleaned_data['action'].script.path))
             output = output.getvalue()
+            error = error.getvalue()
+
+            display = {
+                'host': hostname,
+                'action': form.cleaned_data['action'].name,
+                'tasks': [s[1:s.index(']') + 1] for s in output.split('TASK')][1:],
+                'recap': output.split('PLAY RECAP')[-1][output.rindex('changed'):],
+            }
     else:
         form = RunForm()
 
-    return render(request, 'index.html', context={'form': form, 'output': output})
+    return render(request, 'index.html', context={'form': form, 'display': display, 'error': error})
 
 def add_action(request):
     form = None
@@ -70,3 +79,4 @@ def add_device(request):
         form = FirewallDeviceCreationForm()
     
     return render(request, 'add.html', context={'form': form})
+
