@@ -13,14 +13,21 @@
     {% if display %}
         <hr>
         <div id='run-display'>
-            <p>{{ display.tasks }}</p>
+            <h4>Success!</h4>
+            <h5>Tasks Run:</h5>
+            <ul>
+                {% for t in display.tasks %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+            </ul>
             <p>{{ display.recap }}</p>
         </div>
     {% endif %}
     {% if error %}
         <hr>
         <div id='run-error'>
-            {{ error }}
+            <h4>Error</h4>
+            <p>{{ error }}</p>
         </div>
     {% endif %}
 {% endblock %}

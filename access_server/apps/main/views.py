@@ -1,5 +1,5 @@
 from ansible_playbook_runner import Runner
-from contextlib import redirect_stdout, redirect_stderr
+from contextlib import redirect_stdout
 from io import StringIO
 import os
 import subprocess
@@ -23,18 +23,18 @@ def index(request):
             os.environ['ACTION_HOST'] = hostname
 
             output = StringIO()
-            error = StringIO()
             with redirect_stdout(output):
                 exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', form.cleaned_data['action'].script.path))
             output = output.getvalue()
-            error = error.getvalue()
+            print(output)
 
-            display = {
-                'host': hostname,
-                'action': form.cleaned_data['action'].name,
-                'tasks': [s[1:s.index(']') + 1] for s in output.split('TASK')][1:],
-                'recap': output.split('PLAY RECAP')[-1][output.rindex('changed'):],
-            }
+            try:
+                display = {
+                    'tasks': [s[1:s.index(']') + 1] for s in output.split('TASK')][2:],
+                    'recap': output.split('PLAY RECAP')[-1],
+                }
+            except:
+                error = output
     else:
         form = RunForm()
 
