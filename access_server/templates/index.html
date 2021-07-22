@@ -2,6 +2,22 @@
 
 {% load static %}
 
+{% block head %}
+    <script>
+        function toggleRaw() {
+            var x = document.getElementById('raw-display');
+            var y = document.getElementById('raw-btn');
+            if (x.style.display === 'none') {
+                x.style.display = 'block';
+                y.innerText = 'Hide Raw Output';
+            } else {
+                x.style.display = 'none';
+                y.innerText = 'Show Raw Output';
+            }
+        }
+    </script>
+{% endblock %}
+
 {% block main %}
     <div id='run-form'>
         <form method='post'>
@@ -13,14 +29,15 @@
     {% if display %}
         <hr>
         <div id='run-display'>
-            <h4>Success!</h4>
+            <h4>{{ display.outcome }}</h4>
             <h5>Tasks Run:</h5>
             <ul>
                 {% for t in display.tasks %}
                     <li>{{ t }}</li>
                 {% endfor %}
             </ul>
-            <p>{{ display.recap }}</p>
+            <button id='raw-btn' type='button' onclick='toggleRaw()'>Show Raw Output</button>
+            <pre id='raw-display' style='display:none'>{{ display.raw }}</pre>
         </div>
     {% endif %}
     {% if error %}

@@ -30,8 +30,9 @@ def index(request):
 
             try:
                 display = {
-                    'tasks': [s[1:s.index(']') + 1] for s in output.split('TASK')][2:],
-                    'recap': output.split('PLAY RECAP')[-1],
+                    'outcome': 'Success!' if output.count('failed') <= 1 else 'Error',
+                    'tasks': [s[2:s.index(']')] for s in output.split('TASK')][2:],
+                    'raw': output,
                 }
             except:
                 error = output
