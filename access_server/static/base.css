@@ -1,0 +1,20 @@
+html {
+    overflow-x: hidden;
+    height: 100%;
+}
+
+.placeholder {
+    height: 15px;
+}
+
+.main {
+    background-color: #ddddddc0;
+    position: absolute;
+    left: 10vw;
+    right: 10vw;
+    padding: 10px;
+}
+
+.centered {
+    text-align: center;
+}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+    <div id='run-form'>
+        <form method='post'>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type='submit'>Run</button>
+        </form>
+    </div>
+    {% if output %}
+        <hr>
+        <div id='run-results'>
+            {{ output }}
+        </div>
+    {% endif %}
+{% endblock %}
