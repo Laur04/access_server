@@ -75,6 +75,9 @@ def add_device(request):
         form = FirewallDeviceCreationForm(request.POST)
         if form.is_valid():
             firewall = form.save()
+            firewall.hostname = 'internal-node-' + firewall.name.lower().replace(' ', '-')
+            firewall.save()
+            
             full_address = form.cleaned_data['subnet'].split('/')[0]
             network_address = full_address[:full_address.rindex('.')]
             first_host_address = int(full_address[full_address.rindex('.') + 1:])

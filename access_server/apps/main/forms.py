@@ -20,12 +20,11 @@ class FirewallDeviceCreationForm(ModelForm):
     vlan_number = forms.IntegerField(required=True)
     subnet = forms.CharField(required=True, help="In CIDR form please, for example 100.100.100.0/29")
 
-    field_order = ['name', 'hostname', 'subnet', 'vlan_number', 'active', 'notes']
+    field_order = ['name', 'subnet', 'vlan_number', 'active', 'notes']
     class Meta:
         model = FirewallDevice
         fields = [
             'name',
-            'hostname',
             'active',
             'notes',
         ]
