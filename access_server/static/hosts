@@ -1,2 +1,5 @@
 [firewall_lab_host]
 172.28.0.1  ansible_ssh_pass=DarkCubed123@
+
+[firewall_lab_host:vars]
+ansible_python_interpreter=/usr/bin/python3

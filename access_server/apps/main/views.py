@@ -77,20 +77,20 @@ def add_device(request):
             firewall = form.save()
             firewall.hostname = 'internal-node-' + firewall.name.lower().replace(' ', '-')
             firewall.save()
-            
+
             full_address = form.cleaned_data['subnet'].split('/')[0]
             network_address = full_address[:full_address.rindex('.')]
             first_host_address = int(full_address[full_address.rindex('.') + 1:])
             gateway_host_address = str(first_host_address + 1)
-            control_node_host_address = str(first_host_address + 2)
-            internal_node_host_address = str(first_host_address + 3)
+            control_net_host_address = '172.28.0.' + str(form.cleaned_data['vlan_number'])
+            internal_node_host_address = str(first_host_address + 2)
 
             os.environ['D3_HOSTNAME'] = firewall.hostname.replace(' ', '-')
             os.environ['D3_NETWORK_NAME'] =  'internal-net-' + firewall.name.lower().replace(' ', '-')
             os.environ['D3_NETWORK'] = form.cleaned_data['subnet']
             os.environ['D3_INTERFACE'] = 'ens160.' + str(form.cleaned_data['vlan_number'])
             os.environ['D3_GATEWAY'] = network_address + '.' + gateway_host_address
-            os.environ['D3_CONTROL_NODE_IP'] = network_address + '.' + control_node_host_address
+            os.environ['D3_CONTROL_NET_IP'] = network_address + '.' + control_node_host_address
             os.environ['D3_CONTAINER_IP'] = network_address + '.' + internal_node_host_address
             
             exec("Runner(['{}'], '{}').run()".format(str(settings.STATIC_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/spinup.yml'))

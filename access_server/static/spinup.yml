@@ -9,13 +9,13 @@
         driver: ipvlan
         driver_options:
           parent: "{{ lookup('env', 'D3_INTERFACE') }}"
-        ipam_options:
-          subnet: "{{ lookup('env', 'D3_NETWORK') }}"
-          gateway: "{{ lookup('env', 'D3_GATEWAY') }}"
+        ipam_config:
+          - subnet: "{{ lookup('env', 'D3_NETWORK') }}"
+            gateway: "{{ lookup('env', 'D3_GATEWAY') }}"
         state: present
         attachable: yes
 
-    - name: Start internal node container and connect it to network
+    - name: Start internal node container and connect it to networks
       docker_container:
         name: "{{ lookup('env', 'D3_HOSTNAME') }}"
         hostname: "{{ lookup('env', 'D3_HOSTNAME') }}"
@@ -23,10 +23,5 @@
         networks:
           - name: "{{ lookup('env', 'D3_NETWORK_NAME') }}"
             ipv4_address: "{{ lookup('env', 'D3_CONTAINER_IP') }}"
-
-    - name: Add control node to network
-      docker_container:
-        name: control-node
-        networks:
-          - name: "{{ lookup('env', 'D3_NETWORK_NAME') }}"
-            ipv4_address: "{{ lookup('env', 'D3_CONTROL_NODE_IP') }}"
+          - name: control-net
+            ipv4_address: "{{ lookup('env', 'D3_CONTROL_NET_IP') }}"
