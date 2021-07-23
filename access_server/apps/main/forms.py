@@ -18,7 +18,7 @@ class ActionCreationForm(ModelForm):
 
 class FirewallDeviceCreationForm(ModelForm):
     vlan_number = forms.IntegerField(required=True)
-    subnet = forms.CharField(required=True, help_text="In CIDR form please, for example 100.100.100.0/29")
+    subnet = forms.CharField(required=True, label='Subnet in CIDR form')
 
     field_order = ['name', 'subnet', 'vlan_number', 'active', 'notes']
     class Meta:
