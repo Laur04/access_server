@@ -60,6 +60,23 @@ def manage_action(request):
     return render(request, 'manage_action.html', context={'items': Action.objects.all()})
 
 def add_action(request):
+    default_action_text = """
+    ---
+
+    - hosts: "{{ lookup('env', 'ACTION_HOST') }}"
+    remote_user: controller
+    vars:
+        firewall: pfSense
+    tasks:
+        - name: Verify internet connectivity
+        uri:
+            url: google.com
+
+        - name: <something descriptive>
+        <some ansible module>:
+            <options for that module>
+    """
+
     form = None
     if request.method == 'POST':
         form = ActionCreationForm(request.POST, request.FILES)
@@ -72,7 +89,7 @@ def add_action(request):
             
             return redirect(reverse('manage_action'))
     else:
-        form = ActionCreationForm()
+        form = ActionCreationForm(initial={'content': default_action_text})
 
     help = """
     The task must be an ansible play in the general form:
@@ -96,11 +113,11 @@ def edit_action(request, action_id):
     action = get_object_or_404(Action, id=action_id)
 
     form = None
+    current_script_content = ""
+    with open(action.script.path, 'r') as f:
+        current_script_content = f.read()
     if request.method == 'POST':
-        current_script_content = ""
-        with open(action.script.path, 'r') as f:
-            current_script_content = f.read()
-        form = ActionCreationForm(request.POST, request.FILES, instance=action, initial={'content': current_script_content})
+        form = ActionCreationForm(request.POST, request.FILES, instance=action)
         if form.is_valid():
             action = form.save()
             with open(action.script.path, 'w+') as f:
@@ -109,7 +126,7 @@ def edit_action(request, action_id):
 
             return redirect(reverse('manage_action'))
     else:
-        form = ActionCreationForm(instance=action)
+        form = ActionCreationForm(instance=action, initial={'content': current_script_content})
 
     help = """
     The task must be an ansible play in the general form:

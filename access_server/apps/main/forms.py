@@ -4,23 +4,6 @@ from django.forms import ModelForm
 from .models import Action, FirewallDevice, ScheduledTask
 
 
-default_action_text = """
----
-
-- hosts: "{{ lookup('env', 'ACTION_HOST') }}"
-  remote_user: controller
-  vars:
-    firewall: pfSense
-  tasks:
-    - name: Verify internet connectivity
-      uri:
-        url: google.com
-
-    - name: <something descriptive>
-      <some ansible module>:
-        <options for that module>
-"""
-
 class RunForm(forms.Form):
     firewall_devices = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple, queryset=FirewallDevice.objects.filter(active=True), required=True)
     actions = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple, queryset=Action.objects.all(), required=True)
@@ -44,7 +27,7 @@ class ScheduleRunForm(ModelForm):
         }
 
 class ActionCreationForm(ModelForm):
-    content = forms.CharField(max_length=10000, widget=forms.Textarea, initial=default_action_text)
+    content = forms.CharField(max_length=10000, widget=forms.Textarea)
 
     class Meta:
         model = Action
