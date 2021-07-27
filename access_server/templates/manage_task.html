@@ -6,7 +6,7 @@
     Current Scheduled Tasks:
     <ul>
         {% for i in items %}
-            <li>{{ i }} (ID: {{ i.id }}) - <a href="{% url 'delete_task' i.id %}">delete</a></li>
+            <li><a href="{% url 'edit_task' i.id %}">{{ i }} (ID: {{ i.id }})</a> - <a href="{% url 'delete_task' i.id %}">delete</a></li>
         {% endfor %}
     </ul>
     <a href="{% url 'add_task' %}" class="btn btn-dark" role="button">Add Scheduled Task</a>
