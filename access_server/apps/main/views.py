@@ -213,7 +213,7 @@ def delete_device(request, device_id):
     os.environ['D3_HOSTNAME_TO_RM'] = device.hostname
     exec("Runner(['{}'], '{}').run()".format(str(settings.STATIC_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/spindown.yml'))
     device.delete()
-    
+
     return redirect(reverse('manage_device'))
 
 def add_task(request):
@@ -231,6 +231,30 @@ def add_task(request):
             return redirect(reverse('manage_task'))
     else:
         form = ScheduleRunForm()
+
+    help = """
+    This will add a cron job to run this task at a specified time each day.
+    """
+    
+    return render(request, 'add_edit.html', context={'form': form, 'help': help})
+
+def edit_task(request, task_id):
+    task = get_object_or_404(ScheduledTask, id=task_id)
+
+    form = None
+    if request.method == 'POST':
+        form = ScheduleRunForm(request.POST, instance=task)
+        if form.is_valid():
+            minute = form.cleaned_data["time_to_run"].minute
+            hour = form.cleaned_data['time_to_run'].hour
+            st = form.save()
+            with open('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
+                file.write('{} {} * * * python3 manage.py run_scheduled_task {}'.format(minute, hour, st.id))
+            os.chmod('/etc/cron.daily/access-server' + str(st.id), 0o777)
+
+            return redirect(reverse('manage_task'))
+    else:
+        form = ScheduleRunForm(instance=task)
 
     help = """
     This will add a cron job to run this task at a specified time each day.
