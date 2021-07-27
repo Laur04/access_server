@@ -14,7 +14,7 @@ urlpatterns = [
     path('edit/action/<int:action_id>', views.edit_action, name='edit_action'),
     path('edit/device/<int:device_id>', views.edit_device, name='edit_device'),
     path('edit/task/<int:task_id>', views.edit_task, name='edit_task'),
-    path('delete/action/<int:action_id>', views.views.delete_action, name='delete_action'),
+    path('delete/action/<int:action_id>', views.delete_action, name='delete_action'),
     path('delete/device/<int:device_id>', views.delete_device, name='delete_device'),
     path('delete/task/<int:task_id>', views.delete_task, name='delete_task'),
 ]
