@@ -14,11 +14,11 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         task = ScheduledTask.objects.get(id=int(kwargs['task_id']))
 
-        for h in task.devices:
+        for h in task.devices.all():
             hostname = h.hostname
             with open(str(settings.MEDIA_ROOT) + '/hosts', 'w') as host_file:
                 host_file.write('[{}]\n{}  ansible_ssh_pass={}\n'.format(hostname, hostname, settings.ANSIBLE_SSH_PASS))
             os.environ['ACTION_HOST'] = hostname
 
-            for a in task.actions:
+            for a in task.actions.all():
                 exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', a.script.path))
