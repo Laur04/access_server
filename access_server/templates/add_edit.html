@@ -2,6 +2,14 @@
 
 {% load static %}
 
+{% block head %}
+<style>
+    ul {
+        list-style-type: none;
+    }
+</style>
+{% endblock %}
+
 {% block main %}
     <form method='post' enctype='multipart/form-data'>
         {% csrf_token %}
