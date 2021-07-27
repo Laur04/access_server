@@ -6,7 +6,7 @@
     Available Firewall Devices:
     <ul>
         {% for i in items %}
-            <li><a href="{% url 'edit_device' i.id %}">{{ i }}</a>{% if not i.active %}  <em>(inactive)</em>{% endif %}</li>
+            <li><a href="{% url 'edit_device' i.id %}">{{ i }}</a>{% if not i.active %}  <em>(inactive)</em>{% endif %} - <a href="{% url 'delete_device' i.id %}">delete</a></li>
         {% endfor %}
     </ul>
     <a href="{% url 'add_device' %}" class="btn btn-dark" role="button">Add Firewall Device</a>
