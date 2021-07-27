@@ -58,12 +58,6 @@ def index(request):
 def manage_action(request):
     return render(request, 'manage_action.html', context={'items': Action.objects.all()})
 
-def manage_device(request):
-    return render(request, 'manage_device.html', context={'items': FirewallDevice.objects.all()})
-
-def manage_task(request):
-    return render(request, 'manage_task.html', context={'items': ScheduledTask.objects.all()})
-
 def add_action(request):
     form = None
     if request.method == 'POST':
@@ -113,6 +107,9 @@ def edit_action(request, action_id):
         form = ActionCreationForm(instance=action)
 
     return render(request, 'add_edit.html', context={'form': form, 'help': help})
+
+def manage_device(request):
+    return render(request, 'manage_device.html', context={'items': FirewallDevice.objects.all()})
 
 def add_device(request):
     form = None
@@ -216,6 +213,9 @@ def delete_device(request, device_id):
 
     return redirect(reverse('manage_device'))
 
+def manage_task(request):
+    return render(request, 'manage_task.html', context={'items': ScheduledTask.objects.all()})
+
 def add_task(request):
     form = None
     if request.method == 'POST':
@@ -225,8 +225,10 @@ def add_task(request):
             hour = form.cleaned_data['time_to_run'].hour
             st = form.save()
             with open('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
-                file.write('{} {} * * * python3 manage.py run_scheduled_task {}'.format(minute, hour, st.id))
+                file.write('{} {} * * * python3 manage.py run_scheduled_task {}\n'.format(minute, hour, st.id))
             os.chmod('/etc/cron.daily/access-server' + str(st.id), 0o777)
+            cmd = 'crontab /etc/cron.daily/access-server' + str(st.id)
+            os.system(cmd)
 
             return redirect(reverse('manage_task'))
     else:
@@ -249,8 +251,10 @@ def edit_task(request, task_id):
             hour = form.cleaned_data['time_to_run'].hour
             st = form.save()
             with open('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
-                file.write('{} {} * * * python3 manage.py run_scheduled_task {}'.format(minute, hour, st.id))
+                file.write('{} {} * * * python3 manage.py run_scheduled_task {}\n'.format(minute, hour, st.id))
             os.chmod('/etc/cron.daily/access-server' + str(st.id), 0o777)
+            cmd = 'crontab /etc/cron.daily/access-server' + str(st.id)
+            os.system(cmd)
 
             return redirect(reverse('manage_task'))
     else:
