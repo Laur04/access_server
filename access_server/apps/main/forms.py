@@ -44,7 +44,7 @@ class ScheduleRunForm(ModelForm):
         }
 
 class ActionCreationForm(ModelForm):
-    guided = forms.CharField(max_length=10000, widget=forms.Textarea, initial=default_action_text)
+    content = forms.CharField(max_length=10000, widget=forms.Textarea, initial=default_action_text)
 
     class Meta:
         model = Action

@@ -63,7 +63,7 @@ def add_action(request):
     if request.method == 'POST':
         form = ActionCreationForm(request.POST, request.FILES)
         if form.is_valid():
-            with open(settings.BASE_DIR + '/media/scripts/' + form.cleaned_data["name"] + str(random.randrange(1, 10000)), 'w+') as f:
+            with open(str(settings.BASE_DIR) + '/media/scripts/' + form.cleaned_data["name"] + str(random.randrange(1, 10000)), 'w+') as f:
                 f.write(form.cleaned_data["guided"])
             form.save()
             return redirect(reverse('manage_action'))
