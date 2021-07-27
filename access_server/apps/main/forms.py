@@ -34,12 +34,11 @@ class ScheduleRunForm(ModelForm):
             'actions',
             'time_to_run',
         ]
-
-    def __init__(self, *ars, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['devices'].widget = forms.ModelMultipleChoiceField
-        self.fields['actions'].widget = forms.ModelMultipleChoiceField
-        self.fields['time_to_run'].widget = forms.TimeInput
+        widgets = {
+            'devices': forms.CheckboxSelectMultiple,
+            'actions': forms.CheckboxSelectMultiple,
+            'time_to_run': forms.TextInput,
+        }
 
 class ActionCreationForm(ModelForm):
     guided = forms.CharField(max_length=10000, widget=forms.Textarea, initial=default_action_text)
