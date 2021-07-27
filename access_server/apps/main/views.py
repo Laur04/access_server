@@ -103,8 +103,8 @@ def edit_action(request, action_id):
     if request.method == 'POST':
         form = ActionCreationForm(request.POST, request.FILES, instance=action)
         if form.is_valid():
-            if form["use_guided_upload"]:
-                with (action.script.path) as f:
+            if form.cleaned_data["use_guided_upload"]:
+                with open(action.script.path) as f:
                     f.write(form.cleaned_data["guided"])
             else:
                 form.save()
