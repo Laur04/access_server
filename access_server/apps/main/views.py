@@ -106,6 +106,22 @@ def edit_action(request, action_id):
     else:
         form = ActionCreationForm(instance=action)
 
+    help = """
+    The task must be an ansible play in the general form:
+    ---
+    
+    - hosts: "{{ lookup('env', 'ACTION_HOST') }}"
+      remote_user: controller
+      tasks:
+        - name: Connect to Google
+          uri:
+            url: https://google.com
+        
+        - name: More tasks!
+          ...
+
+    """
+    
     return render(request, 'add_edit.html', context={'form': form, 'help': help})
 
 def manage_device(request):
