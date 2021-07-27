@@ -104,7 +104,7 @@ def edit_action(request, action_id):
         form = ActionCreationForm(request.POST, request.FILES, instance=action)
         if form.is_valid():
             if form.cleaned_data["use_guided_upload"]:
-                with open(action.script.path) as f:
+                with open(action.script.path, 'w+') as f:
                     str_to_write = form.cleaned_data["guided"]
                     f.write(str_to_write)
             else:
