@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+    Current Scheduled Tasks:
+    <ul>
+        {% for i in items %}
+            <li>{{ i }}  <a href="{% url 'delete_task' i.id %}">delete</a></li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'add_task' %}" class="btn btn-dark" role="button">Add Scheduled Task</a>
+{% endblock %}

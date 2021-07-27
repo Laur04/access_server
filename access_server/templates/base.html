@@ -24,9 +24,10 @@
             <div class='main'>
                 <div class='placeholder'></div>
                 <div class='centered'>
-                    <a href="{% url 'index' %}" class="btn btn-dark" role="button">Run Action</a>
-                    <a href="{% url 'add_action' %}" class="btn btn-dark" role="button">Add Action</a>
-                    <a href="{% url 'add_device' %}" class="btn btn-dark" role="button">Add Firewall Device</a>
+                    <a href="{% url 'index' %}" class="btn btn-dark" role="button">Run Action Now</a>
+                    <a href="{% url 'manage_task' %}" class='btn btn-dark' role='button'>Schedule Action</a>
+                    <a href="{% url 'manage_action' %}" class="btn btn-dark" role="button">Manage Actions</a>
+                    <a href="{% url 'manage_device' %}" class="btn btn-dark" role="button">Manage Firewall Device</a>
                 </div>
                 <hr>
                 {% block main %}{% endblock %}
