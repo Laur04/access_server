@@ -36,6 +36,7 @@ class ScheduleRunForm(ModelForm):
         ]
 
     def __init__(self, *ars, **kwargs):
+        super().__init__(*args, **kwargs)
         self.fields['devices'].widget = forms.ModelMultipleChoiceField
         self.fields['actions'].widget = forms.ModelMultipleChoiceField
         self.fields['time_to_run'].widget = forms.TimeInput
