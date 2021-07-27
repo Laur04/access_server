@@ -69,8 +69,8 @@ def add_action(request):
     if request.method == 'POST':
         form = ActionCreationForm(request.POST, request.FILES)
         if form.is_valid():
-            if form["use_guided_upload"]:
-                with (settings.BASE_DIR + '/media/scripts/' + form.cleaned_data["name"] + str(random.randrange(1, 10000))) as f:
+            if form.cleaned_data["use_guided_upload"]:
+                with open(settings.BASE_DIR + '/media/scripts/' + form.cleaned_data["name"] + str(random.randrange(1, 10000)), 'w+') as f:
                     f.write(form.cleaned_data["guided"])
             else:
                 form.save()
@@ -105,8 +105,7 @@ def edit_action(request, action_id):
         if form.is_valid():
             if form.cleaned_data["use_guided_upload"]:
                 with open(action.script.path, 'w+') as f:
-                    str_to_write = form.cleaned_data["guided"]
-                    f.write(str_to_write)
+                    f.write(form.cleaned_data["guided"])
             else:
                 form.save()
             return redirect(reverse('manage_action'))
