@@ -42,7 +42,7 @@ class ScheduleRunForm(ModelForm):
 
 class ActionCreationForm(ModelForm):
     guided = forms.CharField(max_length=10000, widget=forms.Textarea, initial=default_action_text)
-    use_guided_upload = forms.BooleanField(help_text="Checking this will overwrite any previously uploaded context with whatever is in the text field on this page.")
+    use_guided_upload = forms.BooleanField(required=False, help_text="Checking this will overwrite any previously uploaded context with whatever is in the text field on this page.")
 
     class Meta:
         model = Action
@@ -55,11 +55,15 @@ class FirewallDeviceCreationForm(ModelForm):
     vlan_number = forms.IntegerField(required=True)
     subnet = forms.CharField(required=True, label='Subnet in CIDR form')
 
-    field_order = ['name', 'subnet', 'vlan_number', 'active', 'notes']
     class Meta:
         model = FirewallDevice
         fields = [
             'name',
+            'subnet',
+            'vlan_number',
             'active',
             'notes',
         ]
+        labels = {
+            'subnet': "Subnet in CIDR form:"
+        }

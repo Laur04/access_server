@@ -6,7 +6,7 @@
     <form method='post' enctype='multipart/form-data'>
         {% csrf_token %}
         {{ form.as_p }}
-        <button type='submit'>Add</button>
+        <button type='submit'>Submit</button>
     </form>
     {% if error %}
         There was an error. Please see the output below.

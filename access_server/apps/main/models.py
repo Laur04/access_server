@@ -13,6 +13,8 @@ class FirewallDevice(models.Model):
     id = models.AutoField(primary_key=True, null=False, blank=False)
     name = models.CharField(max_length=30, blank=False, null=False)
     hostname = models.CharField(max_length=30, blank=False, null=False)
+    subnet = models.CharField(max_length=30, blank=False, null=False)
+    vlan_number = models.IntegerField(blank=False, null=False)
     active = models.BooleanField(default=True)
     notes = models.TextField(max_length=500, blank=True, null=True)
 
