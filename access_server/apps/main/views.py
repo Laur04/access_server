@@ -207,6 +207,15 @@ def edit_device(request, device_id):
     
     return render(request, 'add_edit.html', context={'form': form, 'help': help})
 
+def delete_device(request, device_id):
+    device = get_object_or_404(FirewallDevice, id=device_id)
+
+    os.environ['D3_HOSTNAME_TO_RM'] = device.hostname
+    exec("Runner(['{}'], '{}').run()".format(str(settings.STATIC_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/spindown.yml'))
+    device.delete()
+    
+    return redirect(reverse('manage_device'))
+
 def add_task(request):
     form = None
     if request.method == 'POST':

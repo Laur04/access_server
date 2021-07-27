@@ -1,0 +1,14 @@
+---
+
+- hosts: firewall_lab_host
+  remote_user: root
+  tasks:
+    - name: Stop container
+      docker_container:
+        name: "{{ lookup('env', 'D3_HOSTNAME_TO_RM') }}"
+        state: stopped
+    
+    - name: Prune container and network
+      docker_prune:
+        containers: yes
+        networks: yes
