@@ -39,6 +39,9 @@ class ScheduleRunForm(ModelForm):
             'actions': forms.CheckboxSelectMultiple,
             'time_to_run': forms.TimeInput,
         }
+        labels = {
+            'time_to_run': "Time to run (24hr time):"
+        }
 
 class ActionCreationForm(ModelForm):
     guided = forms.CharField(max_length=10000, widget=forms.Textarea, initial=default_action_text)

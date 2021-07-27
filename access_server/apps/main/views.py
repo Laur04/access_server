@@ -217,6 +217,7 @@ def add_task(request):
             st = form.save()
             with open('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
                 file.write('{} {} * * * python3 manage.py run_scheduled_task {}'.format(minute, hour, st.id))
+            os.chmod('/etc/cron.daily/access-server' + str(st.id), 0o777)
 
             return redirect(reverse('manage_task'))
     else:
