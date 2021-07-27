@@ -25,7 +25,7 @@ def index(request):
                     host_file.write('[{}]\n{}  ansible_ssh_pass={}\n'.format(hostname, hostname, settings.ANSIBLE_SSH_PASS))
                 os.environ['ACTION_HOST'] = hostname
 
-                for a in form.cleaned_data['action']:
+                for a in form.cleaned_data['actions']:
                     output = StringIO()
                     with redirect_stdout(output):
                         exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', form.cleaned_data['action'].script.path))

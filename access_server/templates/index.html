@@ -19,7 +19,7 @@
 {% endblock %}
 
 {% block main %}
-    <div id='run-form'>
+    <div id='run-form' style='list-style-type:none;'>
         <form method='post'>
             {% csrf_token %}
             {{ form.as_p }}
