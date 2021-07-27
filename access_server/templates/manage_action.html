@@ -6,7 +6,7 @@
     Available Actions:
     <ul>
         {% for i in items %}
-            <li><a href="{% url 'edit_action' i.id %}">{{ i }}</a></li>
+            <li><a href="{% url 'edit_action' i.id %}">{{ i }}</a> - <a href="{% url 'delete_action' i.id %}">delete</a></li>
         {% endfor %}
     </ul>
     <a href="{% url 'add_action' %}" class="btn btn-dark" role="button">Add Action</a>

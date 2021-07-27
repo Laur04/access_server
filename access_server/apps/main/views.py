@@ -146,6 +146,14 @@ def edit_action(request, action_id):
 
     return render(request, 'add_edit.html', context={'form': form, 'help': help})
 
+def delete_action(request, action_id):
+    action = get_object_or_404(Action, id=action_id)
+
+    action.delete()
+
+    return redirect(reverse('manage_action'))
+
+
 def manage_device(request):
     return render(request, 'manage_device.html', context={'items': FirewallDevice.objects.all()})
 
