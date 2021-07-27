@@ -8,7 +8,7 @@ from django.conf import settings
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 
-from .forms import RunForm, ScheduledRunForm, ActionCreationForm, FirewallDeviceCreationForm
+from .forms import RunForm, ScheduleRunForm, ActionCreationForm, FirewallDeviceCreationForm
 from .models import Action, FirewallDevice, ScheduledTask
 
 
@@ -226,7 +226,7 @@ def edit_device(request, device_id):
 def add_task(request):
     form = None
     if request.method == 'POST':
-        form = ScheduledRunForm(request.POST)
+        form = ScheduleRunForm(request.POST)
         if form.is_valid():
             minute = form.cleaned_data["time_to_run"].minute
             hour = form.cleaned_data['time_to_run'].hour
@@ -236,7 +236,7 @@ def add_task(request):
 
             return redirect(reverse('manage_task'))
     else:
-        form = ScheduledRunForm()
+        form = ScheduleRunForm()
 
     help = """
     This will add a cron job to run this task at a specified time each day.
