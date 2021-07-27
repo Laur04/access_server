@@ -29,7 +29,7 @@
     {% if display %}
         <hr><hr>
         <div id='run-display'>
-            {% for hostname, displays in outputs %}
+            {% for hostname, displays in display.items %}
                 <h4>{{ hostname }}</h4>
                 {% for d in displays %}
                     <h5>Action: {{ d.action }} - {{ d.status }}</h5>

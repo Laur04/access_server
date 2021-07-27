@@ -28,7 +28,7 @@ def index(request):
                 for a in form.cleaned_data['actions']:
                     output = StringIO()
                     with redirect_stdout(output):
-                        exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', form.cleaned_data['action'].script.path))
+                        exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', a.script.path))
                     output = output.getvalue()
                     print(output)
 
