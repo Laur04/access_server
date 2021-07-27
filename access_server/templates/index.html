@@ -16,10 +16,15 @@
             }
         }
     </script>
+    <style>
+        ul {
+            list-style-type: none;
+        }
+    </style>
 {% endblock %}
 
 {% block main %}
-    <div id='run-form' style='list-style-type:none;'>
+    <div id='run-form'>
         <form method='post'>
             {% csrf_token %}
             {{ form.as_p }}
@@ -32,13 +37,13 @@
             {% for hostname, displays in display.items %}
                 <h4>{{ hostname }}</h4>
                 {% for d in displays %}
-                    <h5>Action: {{ d.action }} - {{ d.status }}</h5>
+                    <h5>Action: {{ d.action }} - {{ d.outcome }}</h5>
                     <h5>Tasks Run:</h5>
-                    <ul>
+                    <ol>
                         {% for t in d.tasks %}
                             <li>{{ t }}</li>
                         {% endfor %}
-                    </ul>
+                    </ol>
                     <button id='raw-btn' type='button' onclick='toggleRaw()'>Show Raw Output</button>
                     <pre id='raw-display' style='display:none'>{{ d.raw }}</pre>
                 {% endfor %}

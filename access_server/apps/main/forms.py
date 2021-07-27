@@ -35,6 +35,11 @@ class ScheduleRunForm(ModelForm):
             'time_to_run',
         ]
 
+    def __init__(self, *ars, **kwargs):
+        self.fields['devices'].widget = forms.ModelMultipleChoiceField
+        self.fields['actions'].widget = forms.ModelMultipleChoiceField
+        self.fields['time_to_run'].widget = forms.TimeInput
+
 class ActionCreationForm(ModelForm):
     guided = forms.CharField(max_length=10000, widget=forms.Textarea, initial=default_action_text)
     use_guided_upload = forms.BooleanField(help_text="Checking this will overwrite any previously uploaded context with whatever is in the text field on this page.")

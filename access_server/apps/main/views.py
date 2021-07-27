@@ -62,7 +62,7 @@ def manage_device(request):
     return render(request, 'manage_device.html', context={'items': FirewallDevice.objects.all()})
 
 def manage_task(request):
-    return render(request, 'manage_task.html', content_type={'items': ScheduledTask.objects.all()})
+    return render(request, 'manage_task.html', context={'items': ScheduledTask.objects.all()})
 
 def add_action(request):
     form = None
@@ -231,7 +231,7 @@ def add_task(request):
             minute = form.cleaned_data["time_to_run"].minute
             hour = form.cleaned_data['time_to_run'].hour
             st = form.save()
-            with ('/etc/cron.daily/access-server' + str(st.id), 'w') as file:
+            with ('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
                 file.write('{} {} * * * python3 manage.py run_scheduled_task {}'.format(minute, hour, st.id))
 
             return redirect(reverse('manage_task'))
