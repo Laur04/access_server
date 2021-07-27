@@ -4,7 +4,7 @@ from django.db import models
 class Action(models.Model):
     id = models.AutoField(primary_key=True, null=False, blank=False)
     name = models.CharField(max_length=30, blank=False, null=False)
-    script = models.FileField(blank=False, null=False, upload_to='scripts/')
+    script = models.FileField(upload_to='scripts/')
 
     def __str__(self):
         return self.name
