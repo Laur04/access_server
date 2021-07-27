@@ -105,7 +105,8 @@ def edit_action(request, action_id):
         if form.is_valid():
             if form.cleaned_data["use_guided_upload"]:
                 with open(action.script.path) as f:
-                    f.write(form.cleaned_data["guided"])
+                    str_to_write = form.cleaned_data["guided"]
+                    f.write(str_to_write)
             else:
                 form.save()
             return redirect(reverse('manage_action'))
