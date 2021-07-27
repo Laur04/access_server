@@ -5,6 +5,7 @@ import os
 import random
 
 from django.conf import settings
+from django.core.files.base import File
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 
@@ -63,9 +64,12 @@ def add_action(request):
     if request.method == 'POST':
         form = ActionCreationForm(request.POST, request.FILES)
         if form.is_valid():
-            with open(str(settings.BASE_DIR) + '/media/scripts/' + form.cleaned_data["name"] + str(random.randrange(1, 10000)), 'w+') as f:
+            action = form.save()
+            filename = str(settings.BASE_DIR) + '/media/scripts/' + form.cleaned_data["name"] + str(random.randrange(1, 10000))
+            with open(filename, 'w+') as f:
                 f.write(form.cleaned_data["content"])
-            form.save()
+                action.script.save(filename, File(f))
+            
             return redirect(reverse('manage_action'))
     else:
         form = ActionCreationForm()
@@ -98,9 +102,11 @@ def edit_action(request, action_id):
             current_script_content = f.read()
         form = ActionCreationForm(request.POST, request.FILES, instance=action, initial={'content': current_script_content})
         if form.is_valid():
+            action = form.save()
             with open(action.script.path, 'w+') as f:
                 f.write(form.cleaned_data["content"])
-            form.save()
+                action.script.save(action.script.path, File(f))
+
             return redirect(reverse('manage_action'))
     else:
         form = ActionCreationForm(instance=action)
