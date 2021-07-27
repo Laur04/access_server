@@ -64,7 +64,7 @@ def add_action(request):
         form = ActionCreationForm(request.POST, request.FILES)
         if form.is_valid():
             with open(str(settings.BASE_DIR) + '/media/scripts/' + form.cleaned_data["name"] + str(random.randrange(1, 10000)), 'w+') as f:
-                f.write(form.cleaned_data["guided"])
+                f.write(form.cleaned_data["content"])
             form.save()
             return redirect(reverse('manage_action'))
     else:
@@ -96,10 +96,10 @@ def edit_action(request, action_id):
         current_script_content = ""
         with open(action.script.path, 'r') as f:
             current_script_content = f.read()
-        form = ActionCreationForm(request.POST, request.FILES, instance=action, initial={'guided': current_script_content})
+        form = ActionCreationForm(request.POST, request.FILES, instance=action, initial={'content': current_script_content})
         if form.is_valid():
             with open(action.script.path, 'w+') as f:
-                f.write(form.cleaned_data["guided"])
+                f.write(form.cleaned_data["content"])
             form.save()
             return redirect(reverse('manage_action'))
     else:
