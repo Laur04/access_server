@@ -37,7 +37,7 @@ class ScheduleRunForm(ModelForm):
         widgets = {
             'devices': forms.CheckboxSelectMultiple,
             'actions': forms.CheckboxSelectMultiple,
-            'time_to_run': forms.TextInput,
+            'time_to_run': forms.TimeInput,
         }
 
 class ActionCreationForm(ModelForm):
