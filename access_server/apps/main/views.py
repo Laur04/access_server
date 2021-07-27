@@ -225,7 +225,7 @@ def add_task(request):
             hour = form.cleaned_data['time_to_run'].hour
             st = form.save()
             with open('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
-                file.write('{} {} * * * python3 manage.py run_scheduled_task {}\n'.format(minute, hour, st.id))
+                file.write('{} {} * * * python3 manage.py run_scheduled_task {}\n\n'.format(minute, hour, st.id))
             os.chmod('/etc/cron.daily/access-server' + str(st.id), 0o777)
             cmd = 'crontab /etc/cron.daily/access-server' + str(st.id)
             os.system(cmd)
@@ -251,7 +251,7 @@ def edit_task(request, task_id):
             hour = form.cleaned_data['time_to_run'].hour
             st = form.save()
             with open('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
-                file.write('{} {} * * * python3 manage.py run_scheduled_task {}\n'.format(minute, hour, st.id))
+                file.write('{} {} * * * python3 manage.py run_scheduled_task {}\n\n'.format(minute, hour, st.id))
             os.chmod('/etc/cron.daily/access-server' + str(st.id), 0o777)
             cmd = 'crontab /etc/cron.daily/access-server' + str(st.id)
             os.system(cmd)
