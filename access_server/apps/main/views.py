@@ -105,7 +105,7 @@ def edit_action(request, action_id):
             action = form.save()
             with open(action.script.path, 'w+') as f:
                 f.write(form.cleaned_data["content"])
-                action.script.save(action.script.path, File(f))
+                action.script.save(action.script.name, File(f))
 
             return redirect(reverse('manage_action'))
     else:
