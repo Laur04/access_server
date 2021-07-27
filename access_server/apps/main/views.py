@@ -65,7 +65,7 @@ def add_action(request):
         form = ActionCreationForm(request.POST, request.FILES)
         if form.is_valid():
             action = form.save()
-            filename = str(settings.BASE_DIR) + '/media/scripts/' + form.cleaned_data["name"] + str(random.randrange(1, 10000)) + '.yml'
+            filename = form.cleaned_data["name"] + str(random.randrange(1, 10000)) + '.yml'
             with open(filename, 'w+') as f:
                 f.write(form.cleaned_data["content"])
                 action.script.save(filename, File(f))
