@@ -121,7 +121,7 @@ def add_device(request):
         form = FirewallDeviceCreationForm(request.POST)
         if form.is_valid():
 
-            hostname = 'internal-node-' + form.cleaned_data['name'].name.lower().replace(' ', '-')
+            hostname = 'internal-node-' + form.cleaned_data['name'].lower().replace(' ', '-')
             full_address = form.cleaned_data['subnet'].split('/')[0]
             network_address = full_address[:full_address.rindex('.')]
             first_host_address = int(full_address[full_address.rindex('.') + 1:])
@@ -129,7 +129,7 @@ def add_device(request):
             internal_node_host_address = str(first_host_address + 2)
 
             os.environ['D3_HOSTNAME'] = hostname
-            os.environ['D3_NETWORK_NAME'] =  'internal-net-' + form.cleaned_data['name'].name.lower().replace(' ', '-')
+            os.environ['D3_NETWORK_NAME'] =  'internal-net-' + form.cleaned_data['name'].lower().replace(' ', '-')
             os.environ['D3_NETWORK'] = form.cleaned_data['subnet']
             os.environ['D3_INTERFACE'] = 'ens160.' + str(form.cleaned_data['vlan_number'])
             os.environ['D3_GATEWAY'] = network_address + '.' + gateway_host_address
