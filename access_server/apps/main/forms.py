@@ -45,13 +45,11 @@ class ScheduleRunForm(ModelForm):
 
 class ActionCreationForm(ModelForm):
     guided = forms.CharField(max_length=10000, widget=forms.Textarea, initial=default_action_text)
-    use_guided_upload = forms.BooleanField(required=False, help_text="Checking this will overwrite any previously uploaded context with whatever is in the text field above.")
 
     class Meta:
         model = Action
         fields = [
             'name',
-            'script',
         ]
 
 class FirewallDeviceCreationForm(ModelForm):

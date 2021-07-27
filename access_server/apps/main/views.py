@@ -63,11 +63,9 @@ def add_action(request):
     if request.method == 'POST':
         form = ActionCreationForm(request.POST, request.FILES)
         if form.is_valid():
-            if form.cleaned_data["use_guided_upload"]:
-                with open(settings.BASE_DIR + '/media/scripts/' + form.cleaned_data["name"] + str(random.randrange(1, 10000)), 'w+') as f:
-                    f.write(form.cleaned_data["guided"])
-            else:
-                form.save()
+            with open(settings.BASE_DIR + '/media/scripts/' + form.cleaned_data["name"] + str(random.randrange(1, 10000)), 'w+') as f:
+                f.write(form.cleaned_data["guided"])
+            form.save()
             return redirect(reverse('manage_action'))
     else:
         form = ActionCreationForm()
@@ -95,13 +93,14 @@ def edit_action(request, action_id):
 
     form = None
     if request.method == 'POST':
-        form = ActionCreationForm(request.POST, request.FILES, instance=action)
+        current_script_content = ""
+        with open(action.script.path, 'r') as f:
+            current_script_content = f.read()
+        form = ActionCreationForm(request.POST, request.FILES, instance=action, initial={'guided': current_script_content})
         if form.is_valid():
-            if form.cleaned_data["use_guided_upload"]:
-                with open(action.script.path, 'w+') as f:
-                    f.write(form.cleaned_data["guided"])
-            else:
-                form.save()
+            with open(action.script.path, 'w+') as f:
+                f.write(form.cleaned_data["guided"])
+            form.save()
             return redirect(reverse('manage_action'))
     else:
         form = ActionCreationForm(instance=action)
@@ -121,7 +120,7 @@ def edit_action(request, action_id):
           ...
 
     """
-    
+
     return render(request, 'add_edit.html', context={'form': form, 'help': help})
 
 def manage_device(request):
