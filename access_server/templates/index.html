@@ -52,6 +52,7 @@
                 display_div.appendChild(node);
                 for (var a = 0; a < actions.length; a++) {
                     url = "{% url 'run_action' D A %}".replace('D', devices[d]).replace('A', devices[a]);
+                    console.log(url)
                     e.preventDefault();
                     $.ajax({
                         type : 'POST',
