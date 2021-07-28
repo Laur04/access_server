@@ -51,10 +51,11 @@
                 node.appendChild(text);
                 display_div.appendChild(node);
                 for (var a = 0; a < actions.length; a++) {
+                    url = "{% url 'run_action' D A %}".replace('D', devices[d]).replace('A', devices[a]);
                     e.preventDefault();
                     $.ajax({
                         type : 'POST',
-                        url: "{% url 'run_action' D A %}".replace('D', devices[d]).replace('A', devices[a]),
+                        url: url,
                         data: {
                             csrfmiddlewaretoken: '{{ csrf_token }}',
                             dataType: 'json',
