@@ -45,12 +45,15 @@
             }
 
             for (var d = 0; d < devices.length; d++) {
-                var display_div = document.createElement('div');
-                outer_div.appendChild(display_div);
+                var new_display_div = document.createElement('div');
+                new_display_div.id = device_names[d];
+                new_outer_div.appendChild(display_div);
+
                 var node = document.createElement('h4');
                 var text = document.createTextNode(device_names[d]);
                 node.appendChild(text);
-                display_div.appendChild(node);
+                new_display_div.appendChild(node);
+
                 for (var a = 0; a < actions.length; a++) {
                     url = "{% url 'run_action' 12345 6789 %}".replace(/12345/, devices[d]).replace(/6789/, actions[a]);
                     $.ajax({
@@ -61,6 +64,8 @@
                             dataType: 'json',
                         },
                         success: function(data) {
+                            var display_div = document.getElementById(data.hostname);
+
                             var node = document.createElement('h5');
                             node.textContent = 'Action: ' + data.action + ' - ' + data.outcome;
                             display_div.appendChild(node);
@@ -87,15 +92,18 @@
                             var node = document.createElement('pre');
                             node.id = 'raw-display';
                             node.style = 'display:none';
-                            node.textContent = data.raw
+                            node.onclick = 'toggleRaw()';
+                            node.textContent = data.raw;
                             display_div.appendChild(node);
 
                             var node = document.createElement('br');
                             display_div.appendChild(node);
+
+                            running_div.innerHTML = '';
                         },
                         failure: function() {
                             var node = document.createElement('h5');
-                            var text = document.createTextNode('Action: ' + action_names[a] + ' - Operational Failure');
+                            var text = document.createTextNode('Action: undefined - Operational Failure');
                             node.appendChild(text);
                             display_div.appendChild(node);
                             var node = document.createElement('br');
@@ -106,8 +114,6 @@
                 var node = document.createElement('hr');
                 display_div.appendChild(node);
             }
-
-            running_div.innerHTML = '';
         }
     </script>
     <style>
