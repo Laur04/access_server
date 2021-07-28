@@ -51,7 +51,7 @@
                 node.appendChild(text);
                 display_div.appendChild(node);
                 for (var a = 0; a < actions.length; a++) {
-                    url = "{% url 'run_action' " + devices[d] + ' ' + devices[a] + ' %}';
+                    url = "{% url 'run_action' 12345 6789 %}".replace(/12345/, devices[d]).replace(/6789/, actions[a]);
                     e.preventDefault();
                     $.ajax({
                         type : 'POST',
