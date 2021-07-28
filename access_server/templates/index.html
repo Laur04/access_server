@@ -17,7 +17,7 @@
             }
         }
 
-        $('#run-form').on('submit', function(e){
+        function submitAjax() {
             var display_div = document.getElementById('run-display');
             display_div.innerHTML = '';
 
@@ -106,7 +106,7 @@
             }
 
             running_div.innerHTML = '';
-        });
+        }
     </script>
     <style>
         ul {
@@ -117,11 +117,8 @@
 
 {% block main %}
     <div>
-        <form id='run-form' method='post'>
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type='submit'>Run</button>
-        </form>
+        {{ form.as_p }}
+        <button type='submit' onclick='submitAjax()'>Run</button>
     </div>
     <hr><hr>
     <div id='running-display'></div>
