@@ -1,7 +1,6 @@
 from ansible_playbook_runner import Runner
 from contextlib import redirect_stdout
 from io import StringIO
-import json
 import os
 import random
 
@@ -50,7 +49,7 @@ def run_action(request, device_id, action_id):
                 'raw': output,
             }
 
-        return JsonResponse(json.dumps(response))                     
+        return JsonResponse(response)                     
 
 def manage_action(request):
     return render(request, 'manage_action.html', context={'items': Action.objects.all()})
