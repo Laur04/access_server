@@ -49,6 +49,9 @@
                 new_display_div.id = device_names[d].substring(device_names[d].indexOf("(") + 1, device_names[d].indexOf(")"));
                 outer_div.appendChild(new_display_div);
 
+                var node = document.createElement('hr');
+                new_display_div.appendChild(node);
+
                 var node = document.createElement('h4');
                 var text = document.createTextNode(device_names[d]);
                 node.appendChild(text);
@@ -99,8 +102,6 @@
                             display_div.appendChild(node);
                             var node = document.createElement('br');
                             display_div.appendChild(node);
-                            var node = document.createElement('br');
-                            display_div.appendChild(node);
 
                             running_div.innerHTML = '';
                         },
@@ -129,7 +130,7 @@
         {{ form.as_p }}
         <button type='submit' onclick='submitAjax()'>Run</button>
     </div>
-    <hr><hr>
+    <hr>
     <div id='running-display'></div>
     <div id='run-display'></div>
 {% endblock %}
