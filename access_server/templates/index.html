@@ -46,7 +46,7 @@
 
             for (var d = 0; d < devices.length; d++) {
                 var new_display_div = document.createElement('div');
-                new_display_div.id = device_names[d];
+                new_display_div.id = device_names[d].substring(device_names[d].indexOf("(") + 1, device_names[d].indexOf(")"));
                 outer_div.appendChild(new_display_div);
 
                 var node = document.createElement('h4');
