@@ -15,15 +15,15 @@ class ScheduleRunForm(ModelForm):
             'name',
             'devices',
             'actions',
-            'time_to_run',
+            'hour',
+            'minute',
+            'day_of_month',
+            'month',
+            'day_of_week',
         ]
         widgets = {
             'devices': forms.CheckboxSelectMultiple,
             'actions': forms.CheckboxSelectMultiple,
-            'time_to_run': forms.TimeInput,
-        }
-        labels = {
-            'time_to_run': "Time to run (24hr time):"
         }
 
 class ActionCreationForm(ModelForm):

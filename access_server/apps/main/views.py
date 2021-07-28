@@ -1,11 +1,13 @@
 from ansible_playbook_runner import Runner
 from contextlib import redirect_stdout
 from io import StringIO
+import json
 import os
 import random
 
 from django.conf import settings
 from django.core.files.base import File
+from django.http.response import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 
@@ -14,47 +16,41 @@ from .models import Action, FirewallDevice, ScheduledTask
 
 
 def index(request):
-    form = None
-    outputs = dict()
-    if request.method == 'POST':
-        form = RunForm(request.POST)
-        if form.is_valid():
-            for h in form.cleaned_data['firewall_devices']:
-                hostname = h.hostname
-                outputs[hostname] = []
-                with open(str(settings.MEDIA_ROOT) + '/hosts', 'w') as host_file:
-                    host_file.write('[{}]\n{}  ansible_ssh_pass={}\n'.format(hostname, hostname, settings.ANSIBLE_SSH_PASS))
-                os.environ['ACTION_HOST'] = hostname
+    form = RunForm()
+    return render(request, 'index.html', context={'form': form})
 
-                for a in form.cleaned_data['actions']:
-                    output = StringIO()
-                    with redirect_stdout(output):
-                        exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', a.script.path))
-                    output = output.getvalue()
-                    print(output)
+def run_action(request, device_id, action_id):
+    if request.is_ajax():
+        hostname = FirewallDevice.objects.get(id=int(device_id)).hostname
+        action = Action.objects.get(id=int(action_id))
 
-                    try:
-                        display = {
-                            'hostname': hostname,
-                            'action': a.name,
-                            'outcome': 'Success!' if output.count('fatal') == 0 else 'Error',
-                            'tasks': [s[2:s.index(']')] for s in output.split('TASK')][2:],
-                            'raw': output,
-                        }
-                    except:
-                        display = {
-                            'hostname': hostname,
-                            'action': a.name,
-                            'outcome': 'Critical Error',
-                            'tasks': None,
-                            'raw': output,
-                        }
-                        
-                    outputs[hostname].append(display)
-    else:
-        form = RunForm()
+        with open(str(settings.MEDIA_ROOT) + '/hosts', 'w') as host_file:
+            host_file.write('[{}]\n{}  ansible_ssh_pass={}\n'.format(hostname, hostname, settings.ANSIBLE_SSH_PASS))
+        os.environ['ACTION_HOST'] = hostname
+        output = StringIO()
+        with redirect_stdout(output):
+            exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', action.script.path))
+        output = output.getvalue()
+        print(output)
 
-    return render(request, 'index.html', context={'form': form, 'display': outputs})
+        try:
+            response = {
+                'hostname': hostname,
+                'action': action.name,
+                'outcome': 'Success!' if output.count('fatal') == 0 else 'Error',
+                'tasks': [s[2:s.index(']')] for s in output.split('TASK')][2:],
+                'raw': output,
+            }
+        except:
+            response = {
+                'hostname': hostname,
+                'action': action.name,
+                'outcome': 'Critical Error',
+                'tasks': [],
+                'raw': output,
+            }
+
+        return JsonResponse(json.dumps(response))                     
 
 def manage_action(request):
     return render(request, 'manage_action.html', context={'items': Action.objects.all()})
@@ -267,11 +263,9 @@ def add_task(request):
     if request.method == 'POST':
         form = ScheduleRunForm(request.POST)
         if form.is_valid():
-            minute = form.cleaned_data["time_to_run"].minute
-            hour = form.cleaned_data['time_to_run'].hour
             st = form.save()
             with open('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
-                file.write('{} {} * * * python3 manage.py run_scheduled_task {}\n\n'.format(minute, hour, st.id))
+                file.write('{} {} {} {} {} python3 manage.py run_scheduled_task {}\n\n'.format(st.minute, st.hour, st.day_of_month, st.month, st.day_of_week, st.id))
             os.chmod('/etc/cron.daily/access-server' + str(st.id), 0o777)
             cmd = 'crontab /etc/cron.daily/access-server' + str(st.id)
             os.system(cmd)
@@ -293,11 +287,9 @@ def edit_task(request, task_id):
     if request.method == 'POST':
         form = ScheduleRunForm(request.POST, instance=task)
         if form.is_valid():
-            minute = form.cleaned_data["time_to_run"].minute
-            hour = form.cleaned_data['time_to_run'].hour
             st = form.save()
             with open('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
-                file.write('{} {} * * * python3 manage.py run_scheduled_task {}\n\n'.format(minute, hour, st.id))
+                file.write('{} {} {} {} {} python3 manage.py run_scheduled_task {}\n\n'.format(st.minute, st.hour, st.day_of_month, st.month, st.day_of_week, st.id))
             os.chmod('/etc/cron.daily/access-server' + str(st.id), 0o777)
             cmd = 'crontab /etc/cron.daily/access-server' + str(st.id)
             os.system(cmd)

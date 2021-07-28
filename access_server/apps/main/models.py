@@ -26,7 +26,11 @@ class ScheduledTask(models.Model):
     name = models.CharField(max_length=30, blank=False, null=False)
     actions = models.ManyToManyField(Action, related_name='scheduled_tasks_included_in')
     devices = models.ManyToManyField(FirewallDevice, related_name='scheduled_tasks_included_in')
-    time_to_run = models.TimeField(null=False, blank=True)
+    minute = models.CharField(max_length=20, default='*')
+    hour = models.CharField(max_length=20, default='*')
+    day_of_month = models.CharField(max_length=20, default='*')
+    month = models.CharField(max_length=20, default='*', help_text="January is 1")
+    day_of_week = models.CharField(max_length=20, default='*', help_text="Sunday is 0")
 
     def __str__(self):
         return self.name
