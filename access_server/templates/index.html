@@ -17,8 +17,8 @@
         }
 
         function submitAjax() {
-            var display_div = document.getElementById('run-display');
-            display_div.innerHTML = '';
+            var outer_div = document.getElementById('run-display');
+            outer_div.innerHTML = '';
 
             var running_div = document.getElementById('running-display');
             running_div.innerHTML = "<h4 id='running'>Running...</h4><hr><hr>";
@@ -45,6 +45,8 @@
             }
 
             for (var d = 0; d < devices.length; d++) {
+                var display_div = document.createElement('div');
+                outer_div.appendChild(display_div);
                 var node = document.createElement('h4');
                 var text = document.createTextNode(device_names[d]);
                 node.appendChild(text);
@@ -60,7 +62,7 @@
                         },
                         success: function(data) {
                             var node = document.createElement('h5');
-                            node.textContent = 'Action: ' + action_names[a] + ' - ' + data.outcome;
+                            node.textContent = 'Action: ' + data.action + ' - ' + data.outcome;
                             display_div.appendChild(node);
 
                             var node = document.createElement('h5');
@@ -73,6 +75,7 @@
                                 child_node.textContent = data.tasks[i];
                                 node.appendChild(child_node);
                             }
+                            display_div.appendChild(node);
 
                             var node = document.createElement('button');
                             node.id = 'raw-btn';
@@ -85,6 +88,7 @@
                             node.id = 'raw-display';
                             node.style = 'display:none';
                             node.textContent = data.raw
+                            display_div.appendChild(node);
 
                             var node = document.createElement('br');
                             display_div.appendChild(node);
