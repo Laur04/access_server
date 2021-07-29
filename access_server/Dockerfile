@@ -12,9 +12,9 @@ ENV APP_HOME=/home/access_server_user/access_server
 RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/serve
 RUN mkdir $APP_HOME/media
-WORKDIR $APP_HOME
-
+WORKDIR $HOME
 COPY . $APP_HOME
+RUN mv manage.py $HOME/manage.py
 
 RUN chown -R access_server_user:access_server_user $APP_HOME
 
