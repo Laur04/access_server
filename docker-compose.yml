@@ -27,7 +27,7 @@ services:
     environment:
       - POSTGRES_USER=access_server_user
       - POSTGRES_PASSWORD=DarkCubed123@
-      - POSTGRES_DB=access_serve
+      - POSTGRES_DB=access_server
 
   control-node-nginx:
     build: ./nginx
