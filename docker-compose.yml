@@ -3,7 +3,7 @@ version: '3.7'
 services:
   control-node-web:
     build: 
-        context: ./app
+        context: ./access_server
         dockerfile: Dockerfile
     networks:
       - control-net
