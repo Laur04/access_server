@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--=ss+dg!l5u)be5iakiyu(0)$!ub-@&7@q9ixb&dxys4_0m5m*'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = int(os.environ.get('DEBUG', default=0))
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
@@ -76,12 +77,12 @@ WSGI_APPLICATION = 'access_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'access_server',
-	'USER': 'access_server_user',
-	'PASSWORD': 'DarkCubed123@',
-	'HOST': 'localhost',
-	'PORT': '',
+        'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.postgresql_psycopg2'),
+        'NAME': os.environ.get('SQL_DATABASE', 'access_server'),
+        'USER': os.environ.get('SQL_USER', 'access_server_user'),
+        'PASSWORD': os.environ.get('SQL_PASSWORD', os.environ.get('ANSIBLE_SSH_PASS', 'password')),
+        'HOST': os.environ.get('SQL_HOST', 'localhost'),
+        'PORT': os.environ.get('SQL_PORT', '5432'),
     }
 }
 
@@ -136,6 +137,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+ANSIBLE_SSH_PASS = os.environ['ANSIBLE_SSH_PASS']
 
 try:
     from .secret import *  # noqa

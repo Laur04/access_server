@@ -193,6 +193,8 @@ def add_device(request):
         form = FirewallDeviceCreationForm()
 
     help = """
+    Don't use a vlan number less than 10.
+
     This will perform much of the setup. However, for this to work you need to first:
      - create a unique vlan on the lab's Cisco switch
      - pick an available /29 subnet from 100.100.100.0
@@ -236,6 +238,8 @@ def edit_device(request, device_id):
         form = FirewallDeviceCreationForm(instance=device)
 
     help = """
+    Don't use a vlan number less than 10.
+
     This will perform much of the setup. However, for this to work you need to first:
      - create a unique vlan on the lab's Cisco switch
      - pick an available /29 subnet from 100.100.100.0

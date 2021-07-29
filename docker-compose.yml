@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+  control-node-web:
+    build: 
+        context: ./app
+        dockerfile: Dockerfile
+    networks:
+      - control-net
+    command: gunicorn access_server.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+        - static_volume:/home/access_server_user/access_server/serve
+        - media_volume:/home/access_server_user/access_server/media
+    expose:
+      - 8000
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    
+  control-node-db:
+    image: postgres:12.0-alpine
+    networks:
+      - control-net
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=access_server_user
+      - POSTGRES_PASSWORD=DarkCubed123@
+      - POSTGRES_DB=access_serve
+
+  control-node-nginx:
+    build: ./nginx
+    networks:
+      - control-net
+    volumes:
+        - static_volume:/home/access_server_user/access_server/serve
+        - media_volume:/home/access_server_user/access_server/media
+    ports: - 1080:80
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  control-net:
+    external: true
+    name: control-net
+
