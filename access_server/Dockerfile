@@ -15,7 +15,6 @@ RUN mkdir $APP_HOME/media
 WORKDIR $APP_HOME
 COPY . $APP_HOME
 COPY manage.py $HOME/manage.py
-WORKDIR $HOME
 
 RUN chown -R access_server_user:access_server_user $APP_HOME
 
@@ -24,6 +23,8 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 RUN chmod +x $APP_HOME/entrypoint.sh
+
+WORKDIR $HOME
 
 USER access_server_user
 
