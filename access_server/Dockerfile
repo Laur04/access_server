@@ -12,7 +12,7 @@ ENV APP_HOME=/home/access_server_user/access_server
 RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/serve
 RUN mkdir $APP_HOME/media
-WORKDIR $HOME
+WORKDIR $APP_HOME
 COPY . $APP_HOME
 COPY manage.py $HOME/manage.py
 
