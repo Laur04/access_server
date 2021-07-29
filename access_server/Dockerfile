@@ -22,6 +22,8 @@ RUN apk update && apk add gcc musl-dev jpeg-dev zlib-dev libffi-dev cairo-dev pa
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+RUN chmod +x $APP_HOME/entrypoint.sh
+
 USER access_server_user
 
 ENTRYPOINT ["/home/access_server_user/access_server/entrypoint.sh"]
