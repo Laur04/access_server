@@ -18,7 +18,7 @@ COPY . $APP_HOME
 
 RUN chown -R access_server_user:access_server_user $APP_HOME
 
-RUN apk update && apk add postgresql-dev python3-dev
+RUN apk update && apk add gcc postgresql-dev python3-dev
 RUN pip install -r requirements.txt
 
 USER access_server_user
