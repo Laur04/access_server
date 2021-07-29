@@ -18,7 +18,7 @@ COPY . $APP_HOME
 
 RUN chown -R access_server_user:access_server_user $APP_HOME
 
-RUN apk update && apk add gcc musl-dev linux-headers postgresql-dev python3-dev
+RUN apk update && apk add gcc musl-dev jpeg-dev zlib-dev libffi-dev cairo-dev pango-dev gdk-pixbuf-dev postgresql-dev python3-dev libpq
 RUN pip install -r requirements.txt
 
 USER access_server_user
