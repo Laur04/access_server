@@ -14,7 +14,6 @@ RUN mkdir $APP_HOME/serve
 RUN mkdir $APP_HOME/media
 WORKDIR $APP_HOME
 COPY . $APP_HOME
-COPY manage.py $HOME/manage.py
 
 RUN chown -R access_server_user:access_server_user $APP_HOME
 
