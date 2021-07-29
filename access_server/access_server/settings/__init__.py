@@ -77,12 +77,8 @@ WSGI_APPLICATION = 'access_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.postgresql_psycopg2'),
-        'NAME': os.environ.get('SQL_DATABASE', 'access_server'),
-        'USER': os.environ.get('SQL_USER', 'access_server_user'),
-        'PASSWORD': os.environ.get('SQL_PASSWORD', os.environ.get('ANSIBLE_SSH_PASS', 'password')),
-        'HOST': os.environ.get('SQL_HOST', 'localhost'),
-        'PORT': os.environ.get('SQL_PORT', '5432'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
