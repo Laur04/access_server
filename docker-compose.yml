@@ -36,7 +36,8 @@ services:
     volumes:
         - static_volume:/home/access_server_user/access_server/serve
         - media_volume:/home/access_server_user/access_server/media
-    ports: - 1080:80
+    ports:
+      - 1080:80
     depends_on:
       - web
 
