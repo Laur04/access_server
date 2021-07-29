@@ -31,6 +31,7 @@ services:
 
   control-node-nginx:
     build: ./nginx
+    commad: nginx -g 'daemon off;'
     networks:
       - control-net
     volumes:
