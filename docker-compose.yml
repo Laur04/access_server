@@ -7,7 +7,7 @@ services:
         dockerfile: Dockerfile
     networks:
       - control-net
-    command: gunicorn access_server.access_server.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn access_server.wsgi:application --bind 0.0.0.0:8000
     volumes:
         - static_volume:/home/access_server_user/access_server/serve
         - media_volume:/home/access_server_user/access_server/media
