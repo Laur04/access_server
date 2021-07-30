@@ -1,5 +1,5 @@
 #!/bin/sh
 
-rc-service crond start
+crond
 
 exec "$@"
