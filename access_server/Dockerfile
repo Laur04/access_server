@@ -13,14 +13,13 @@ ENV ANSIBLE_HOST_KEY_CHECKING=False
 RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/serve
 RUN mkdir $APP_HOME/media
-WORKDIR $APP_HOME
 COPY . $APP_HOME
 
 RUN chown -R access_server_user:access_server_user $APP_HOME
 
-RUN apk update && apk add gcc musl-dev jpeg-dev zlib-dev libffi-dev cairo-dev pango-dev gdk-pixbuf-dev postgresql-dev python3-dev libpq openssl-dev cargo sshpass bash
+RUN apk update && apk add gcc musl-dev jpeg-dev zlib-dev libffi-dev cairo-dev pango-dev gdk-pixbuf-dev postgresql-dev python3-dev libpq openssl-dev cargo sshpass bash openssh
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install -r $APP_HOME/requirements.txt
 
 RUN chmod +x $APP_HOME/entrypoint.sh
 
