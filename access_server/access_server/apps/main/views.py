@@ -270,7 +270,7 @@ def add_task(request):
             with open('/etc/periodic/access_server' + str(st.id), 'w+') as file:
                 file.write('{} {} {} {} {} python3 manage.py run_scheduled_task {}\n\n'.format(st.minute, st.hour, st.day_of_month, st.month, st.day_of_week, st.id))
             os.chmod('/etc/periodic/access-server' + str(st.id), 0o777)
-            cmd = 'crontab /etc/periodic/access-server' + str(st.id)
+            cmd = 'crond -c /etc/periodic/access-server' + str(st.id)
             os.system(cmd)
 
             return redirect(reverse('manage_task'))
@@ -294,7 +294,7 @@ def edit_task(request, task_id):
             with open('/etc/periodic/access-server' + str(st.id), 'w+') as file:
                 file.write('{} {} {} {} {} python3 manage.py run_scheduled_task {}\n\n'.format(st.minute, st.hour, st.day_of_month, st.month, st.day_of_week, st.id))
             os.chmod('/etc/periodic/access-server' + str(st.id), 0o777)
-            cmd = 'crontab /etc/periodic/access-server' + str(st.id)
+            cmd = 'crond -c /etc/periodic/access-server' + str(st.id)
             os.system(cmd)
 
             return redirect(reverse('manage_task'))
