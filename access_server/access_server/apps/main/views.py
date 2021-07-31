@@ -267,10 +267,10 @@ def add_task(request):
         form = ScheduleRunForm(request.POST)
         if form.is_valid():
             st = form.save()
-            with open('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
+            with open('/etc/periodic/access_server' + str(st.id), 'w+') as file:
                 file.write('{} {} {} {} {} python3 manage.py run_scheduled_task {}\n\n'.format(st.minute, st.hour, st.day_of_month, st.month, st.day_of_week, st.id))
-            os.chmod('/etc/cron.daily/access-server' + str(st.id), 0o777)
-            cmd = 'crontab /etc/cron.daily/access-server' + str(st.id)
+            os.chmod('/etc/periodic/access-server' + str(st.id), 0o777)
+            cmd = 'crontab /etc/periodic/access-server' + str(st.id)
             os.system(cmd)
 
             return redirect(reverse('manage_task'))
@@ -291,10 +291,10 @@ def edit_task(request, task_id):
         form = ScheduleRunForm(request.POST, instance=task)
         if form.is_valid():
             st = form.save()
-            with open('/etc/cron.daily/access-server' + str(st.id), 'w+') as file:
+            with open('/etc/periodic/access-server' + str(st.id), 'w+') as file:
                 file.write('{} {} {} {} {} python3 manage.py run_scheduled_task {}\n\n'.format(st.minute, st.hour, st.day_of_month, st.month, st.day_of_week, st.id))
-            os.chmod('/etc/cron.daily/access-server' + str(st.id), 0o777)
-            cmd = 'crontab /etc/cron.daily/access-server' + str(st.id)
+            os.chmod('/etc/periodic/access-server' + str(st.id), 0o777)
+            cmd = 'crontab /etc/periodic/access-server' + str(st.id)
             os.system(cmd)
 
             return redirect(reverse('manage_task'))
@@ -310,7 +310,7 @@ def edit_task(request, task_id):
 def delete_task(request, task_id):
     task = get_object_or_404(ScheduledTask, id=task_id)
     try:
-        os.remove('/etc/cron.daily/access-server' + str(task.id))
+        os.remove('/etc/periodic/access-server' + str(task.id))
     except:
         pass
     task.delete()
