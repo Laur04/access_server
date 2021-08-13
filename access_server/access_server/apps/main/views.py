@@ -1,5 +1,6 @@
 from ansible_playbook_runner import Runner
 from contextlib import redirect_stdout
+from datetime import datetime
 from io import StringIO
 import os
 import random
@@ -17,6 +18,54 @@ from .models import Action, FirewallDevice, ScheduledTask
 def index(request):
     form = RunForm()
     return render(request, 'index.html', context={'form': form})
+
+def status(request):
+    firewalls = FirewallDevice.objects.all()
+    statuses = dict()
+
+    # determine if container is up
+    output = StringIO()
+    with redirect_stdout(output):
+        exec("Runner(['{}'], '{}').run()".format(str(settings.STATIC_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/status_one.yml'))
+    output = output.getvalue()
+
+    for device in firewalls:
+        # continue determine if container is up
+        result = device.hostname in output
+        statuses[device.name] = [result]
+
+        if result:
+            # set up status tasks on container
+            os.environ['STATUS_HOSTNAME'] = device.hostname
+            with open(str(settings.MEDIA_ROOT) + '/hosts', 'w') as host_file:
+                host_file.write('[{}]\n{}  ansible_ssh_pass={}\n'.format(device.hostname, device.hostname, settings.ANSIBLE_SSH_PASS))
+            full_address = device.subnet.split('/')[0]
+            gateway_full_address = full_address[:full_address.rindex('.')] + '.' + str(int(full_address[full_address.rindex('.') + 1:]) + 1)
+            os.environ['ADDRESS'] = gateway_full_address
+
+            # determine if associated firewall is up
+            output = StringIO()
+            with redirect_stdout(output):
+                exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/status_two.yml'))
+            output = output.getvalue()
+            result = "64 bytes from" in output
+            statuses[device.name].append(result)
+
+            # determine if container default route is set correctly
+            output = StringIO()
+            with redirect_stdout(output):
+                exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/status_three.yml'))
+            output = output.getvalue()
+            result = "default via {}".format(gateway_full_address) in output
+            statuses[device.name].append(result)
+        else:
+            # if the container isn't up, we can't test the other stuff
+            statuses[device.name].append(None)
+            statuses[device.name].append(None)
+
+    time = datetime.now()
+
+    return render(request, 'status.html', context={'statuses': statuses, 'time': time})
 
 def run_action(request, device_id, action_id):
     if request.is_ajax():
@@ -60,8 +109,6 @@ def add_action(request):
 
     - hosts: "{{ lookup('env', 'ACTION_HOST') }}"
     remote_user: controller
-    vars:
-        firewall: pfSense
     tasks:
         - name: Verify internet connectivity
         uri:

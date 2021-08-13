@@ -1,0 +1,11 @@
+---
+
+- hosts: "{{ lookup('env', 'STATUS_HOSTNAME') }}"
+  remote_user: controller
+  tasks:
+    - shell: ping "{{ lookup('env', 'ADDRESS') }}"
+      args:
+        executable: /bin/bash
+      register: ps
+
+    - debug: var=ps.stdout_lines

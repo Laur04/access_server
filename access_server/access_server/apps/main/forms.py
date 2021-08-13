@@ -27,7 +27,7 @@ class ScheduleRunForm(ModelForm):
         }
 
 class ActionCreationForm(ModelForm):
-    content = forms.CharField(max_length=10000, widget=forms.Textarea)
+    content = forms.CharField(max_length=10000, widget=forms.Textarea(attrs={'rows':50, 'cols':160}))
 
     class Meta:
         model = Action

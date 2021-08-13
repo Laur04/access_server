@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+These statuses were generated at {{ time }}. Refresh the page to reload them.
+
+{% for device, status_list in statuses.items %}
+    <ul>{{ device }}
+        <li>
+            {% if status_list.0 %}
+                The firewall container is online
+            {% else %}
+                The firewall container is down. ssh into firewall_lab_host and run docker restart to bring it back up.
+            {% endif %}
+        </li>
+        <li>
+            {% if status_list.1 %}
+                The firewall device is pingable.
+            {% else %}
+                The firewall device isn't pingable. Either the firewall container is down (see above) or the device itself is offline.
+            {% endif %}
+        </li>
+        <li>
+            {% if status_list.2 %}
+                The firewall container is routing traffic correctly.
+            {% else %}
+                The firewall container isn't routing traffic correctly. Check its default route.
+            {% endif %}
+        </li>
+    </ul>
+{% endfor %}
+    
+{% endblock %}

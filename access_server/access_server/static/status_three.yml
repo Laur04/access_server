@@ -1,0 +1,9 @@
+---
+
+- hosts: "{{ lookup('env', 'STATUS_HOSTNAME') }}"
+  remote_user: controller
+  tasks:
+    - shell: ip route
+      register: ps
+
+    - debug: var=ps.stdout_lines

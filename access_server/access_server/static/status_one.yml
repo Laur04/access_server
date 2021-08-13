@@ -1,0 +1,9 @@
+---
+
+- hosts: firewall_lab_host
+  remote_user: root
+  tasks:
+    - shell: docker ps
+      register: ps
+
+    - debug: var=ps.stdout_lines
