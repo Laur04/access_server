@@ -20,52 +20,64 @@ def index(request):
     return render(request, 'index.html', context={'form': form})
 
 def status(request):
-    firewalls = FirewallDevice.objects.all()
-    statuses = dict()
+    return render(request, 'status.html', context={'firewalls': FirewallDevice.objects.all()})
+
+def run_status(request, device_id):
+    device = get_object_or_404(FirewallDevice, id=device_id)
+    statuses = []
 
     # determine if container is up
     output = StringIO()
     with redirect_stdout(output):
         exec("Runner(['{}'], '{}').run()".format(str(settings.STATIC_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/status_one.yml'))
     output = output.getvalue()
+    result = device.hostname in output
+    if result:
+        statuses.append("The firewall container is online.")
+    else:
+        statuses.append("The firewall container is down. ssh into firewall_lab_host and run docker restart to bring it back up.")
 
-    for device in firewalls:
-        # continue determine if container is up
-        result = device.hostname in output
-        statuses[device.name] = [result]
+    if result:
+        # set up status tasks on container
+        os.environ['STATUS_HOSTNAME'] = device.hostname
+        with open(str(settings.MEDIA_ROOT) + '/hosts', 'w') as host_file:
+            host_file.write('[{}]\n{}  ansible_ssh_pass={}\n'.format(device.hostname, device.hostname, settings.ANSIBLE_SSH_PASS))
+        full_address = device.subnet.split('/')[0]
+        gateway_full_address = full_address[:full_address.rindex('.')] + '.' + str(int(full_address[full_address.rindex('.') + 1:]) + 1)
+        os.environ['ADDRESS'] = gateway_full_address
 
+        # determine if associated firewall is up
+        output = StringIO()
+        with redirect_stdout(output):
+            exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/status_two.yml'))
+        output = output.getvalue()
+        result = "64 bytes from" in output
         if result:
-            # set up status tasks on container
-            os.environ['STATUS_HOSTNAME'] = device.hostname
-            with open(str(settings.MEDIA_ROOT) + '/hosts', 'w') as host_file:
-                host_file.write('[{}]\n{}  ansible_ssh_pass={}\n'.format(device.hostname, device.hostname, settings.ANSIBLE_SSH_PASS))
-            full_address = device.subnet.split('/')[0]
-            gateway_full_address = full_address[:full_address.rindex('.')] + '.' + str(int(full_address[full_address.rindex('.') + 1:]) + 1)
-            os.environ['ADDRESS'] = gateway_full_address
-
-            # determine if associated firewall is up
-            output = StringIO()
-            with redirect_stdout(output):
-                exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/status_two.yml'))
-            output = output.getvalue()
-            result = "64 bytes from" in output
-            statuses[device.name].append(result)
-
-            # determine if container default route is set correctly
-            output = StringIO()
-            with redirect_stdout(output):
-                exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/status_three.yml'))
-            output = output.getvalue()
-            result = "default via {}".format(gateway_full_address) in output
-            statuses[device.name].append(result)
+            statuses.append("The firewall device is pingable.")
         else:
-            # if the container isn't up, we can't test the other stuff
-            statuses[device.name].append(None)
-            statuses[device.name].append(None)
+            statuses.append("The firewall device isn't pingable. Either the firewall container is down (see above) or the device itself is offline.")
 
-    time = datetime.now()
+        # determine if container default route is set correctly
+        output = StringIO()
+        with redirect_stdout(output):
+            exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/status_three.yml'))
+        output = output.getvalue()
+        result = "default via {}".format(gateway_full_address) in output
+        if result:
+            statuses.append("The firewall container is routing traffic correctly.")
+        else:
+            statuses.append("The firewall container isn't routing traffic correctly. Check its default route.")
+    else:
+        # if the container isn't up, we can't test the other stuff
+        statuses.append("The firewall device isn't pingable because the firewall container is down (see above).")
+        statuses.append("The firewall container isn't routing traffic correctly because it is down (see above).")
 
-    return render(request, 'status.html', context={'statuses': statuses, 'time': time})
+    response = {
+        'statuses': statuses,
+        'time': datetime.now()
+    }
+
+    return JsonResponse(response)
 
 def run_action(request, device_id, action_id):
     if request.is_ajax():

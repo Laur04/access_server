@@ -2,33 +2,44 @@
 
 {% load static %}
 
-{% block main %}
-These statuses were generated at {{ time }}. Refresh the page to reload them.
+{% bloch head %}
+    <script>
+        function submitAjax(device_id) {
+            url = "{% url 'run_status' 12345 %}".replace(/12345/, device_id);
+            $.ajax({
+                type : 'POST',
+                url: url,
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    dataType: 'json',
+                },
+                success: function(data) {
+                    $('#' + device_id + '-time').innerText = data.time;
+                    var node = document.createElement('ol');
+                    for (var i = 0; i < data.statuses.length; i++) {
+                        var child_node = document.createElement('li');
+                        child_node.textContent = data.statuses[i];
+                        node.appendChild(child_node);
+                    }
+                    $('#' + device_id + '-status').appendChild(node);
+                },
+                failure: function() {
+                    var node = document.createElement('p');
+                    var text = document.createTextNode("Failed to get status; try again.");
+                    node.appendChild(text);
+                    $('#' + device_id + '-status').appendChild(node);
+                }
+            });
+        }
+    </script>
+{% block head %}
 
-{% for device, status_list in statuses.items %}
-    <ul>{{ device }}
-        <li>
-            {% if status_list.0 %}
-                The firewall container is online
-            {% else %}
-                The firewall container is down. ssh into firewall_lab_host and run docker restart to bring it back up.
-            {% endif %}
-        </li>
-        <li>
-            {% if status_list.1 %}
-                The firewall device is pingable.
-            {% else %}
-                The firewall device isn't pingable. Either the firewall container is down (see above) or the device itself is offline.
-            {% endif %}
-        </li>
-        <li>
-            {% if status_list.2 %}
-                The firewall container is routing traffic correctly.
-            {% else %}
-                The firewall container isn't routing traffic correctly. Check its default route.
-            {% endif %}
-        </li>
-    </ul>
-{% endfor %}
-    
+{% block main %}
+    {% for f in firewalls %}
+        <h4>{{ f.name }} ({{ f.hostname }})</h4>
+        <p>Last updated at <b id="{{ f.id }}-time">never</b></p>
+        <button type='submit' onclick='submitAjax({{ f.id }})'>Get Status</button>
+        <br>
+        <div id="{{ f.id }}-status"></div>
+    {% endfor %}
 {% endblock %}
