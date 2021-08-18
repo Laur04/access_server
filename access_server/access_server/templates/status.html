@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% bloch head %}
+{% block head %}
     <script>
         function submitAjax(device_id) {
             url = "{% url 'run_status' 12345 %}".replace(/12345/, device_id);
