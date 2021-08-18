@@ -6,6 +6,7 @@
     <script>
         function submitAjax(device_id) {
             url = "{% url 'run_status' 12345 %}".replace(/12345/, device_id);
+            $('#' + device_id + '-time').innerText = "working...";
             $.ajax({
                 type : 'POST',
                 url: url,
@@ -21,18 +22,18 @@
                         child_node.textContent = data.statuses[i];
                         node.appendChild(child_node);
                     }
-                    $('#' + device_id + '-status').appendChild(node);
+                    document.getElementById(device_id + '-status').appendChild(node);
                 },
                 failure: function() {
                     var node = document.createElement('p');
                     var text = document.createTextNode("Failed to get status; try again.");
                     node.appendChild(text);
-                    $('#' + device_id + '-status').appendChild(node);
+                    document.getElementById(device_id + '-status').appendChild(node);
                 }
             });
         }
     </script>
-{% block head %}
+{% endblock %}
 
 {% block main %}
     {% for f in firewalls %}
