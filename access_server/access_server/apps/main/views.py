@@ -51,7 +51,7 @@ def run_status(request, device_id):
         with redirect_stdout(output):
             exec("Runner(['{}'], '{}').run()".format(str(settings.MEDIA_ROOT) + '/hosts', str(settings.STATIC_ROOT) + '/status_two.yml'))
         output = output.getvalue()
-        result = not output.count('fatal') == 0
+        result = "64 bytes from" in output
         if result:
             statuses.append("The firewall device is pingable.")
         else:
