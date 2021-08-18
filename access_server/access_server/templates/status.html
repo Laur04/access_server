@@ -6,7 +6,7 @@
     <script>
         function submitAjax(device_id) {
             url = "{% url 'run_status' 12345 %}".replace(/12345/, device_id);
-            $('#' + device_id + '-time').innerText = "working...";
+            $('#' + device_id + '-time').text("working...");
             $.ajax({
                 type : 'POST',
                 url: url,
@@ -15,7 +15,7 @@
                     dataType: 'json',
                 },
                 success: function(data) {
-                    $('#' + device_id + '-time').innerText = data.time;
+                    $('#' + device_id + '-time').text(data.time);
                     var node = document.createElement('ol');
                     for (var i = 0; i < data.statuses.length; i++) {
                         var child_node = document.createElement('li');
@@ -25,6 +25,7 @@
                     document.getElementById(device_id + '-status').appendChild(node);
                 },
                 failure: function() {
+                    $('#' + device_id + '-time').text("failed");
                     var node = document.createElement('p');
                     var text = document.createTextNode("Failed to get status; try again.");
                     node.appendChild(text);

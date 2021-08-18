@@ -3,11 +3,7 @@
 - hosts: "{{ lookup('env', 'STATUS_HOSTNAME') }}"
   remote_user: controller
   tasks:
-    - shell: ping "{{ lookup('env', 'ADDRESS') }}"
-      async: 5
-      poll: 0
-      args:
-        executable: /bin/bash
-      register: ps
-
-    - debug: var=ps.stdout_lines
+    - name: Ping the specified IP Ranges
+      local_action: 'shell ping -a -c 1 -W 1 "{{ lookup('env', 'ADDRESS') }}"'
+      register: result
+      failed_when: ('100% packet loss' in result.stdout)
