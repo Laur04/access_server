@@ -20,6 +20,7 @@
         name: "{{ lookup('env', 'D3_HOSTNAME') }}"
         hostname: "{{ lookup('env', 'D3_HOSTNAME') }}"
         image: internal-node:latest
+        restart_policy: always
         networks:
           - name: control-net
             ipv4_address: "{{ lookup('env', 'D3_CONTROL_NET_IP') }}"
